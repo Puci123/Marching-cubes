@@ -72,7 +72,7 @@ public class OneCubeTest : MonoBehaviour
         {
             for (int i = 0; i < cell.maiVerecies.Length ; i++)
             {
-                Gizmos.color = cell.maiVerecies[i].Active ? Color.green : Color.red;
+              //  Gizmos.color = cell.maiVerecies[i].Active ? Color.green : Color.red;
                 Gizmos.DrawCube(cell.maiVerecies[i].WordPos, Vector3.one / 4);
             }
             

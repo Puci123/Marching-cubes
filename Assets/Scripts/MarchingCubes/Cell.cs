@@ -12,26 +12,30 @@ public class Cell
 
     public  Cell(Vertex[] vertices,float _isoValue)
     {
+
+        isoValue = _isoValue;
+
+
         for (int i = 0; i < vertices.Length; i++)
         {
             maiVerecies[i] = vertices[i];
         }
 
         //botom sqer
-        verticesInresectons[0] = new Vertex(Interpolate(maiVerecies[0], maiVerecies[1]), isoValue);
-        verticesInresectons[1] = new Vertex(Interpolate(maiVerecies[1], maiVerecies[2]), isoValue);
-        verticesInresectons[2] = new Vertex(Interpolate(maiVerecies[2], maiVerecies[3]), isoValue);
-        verticesInresectons[3] = new Vertex(Interpolate(maiVerecies[3], maiVerecies[0]), isoValue);
+        verticesInresectons[0] = new Vertex(Interpolate(maiVerecies[0], maiVerecies[1]),1, isoValue);
+        verticesInresectons[1] = new Vertex(Interpolate(maiVerecies[1], maiVerecies[2]),1, isoValue);
+        verticesInresectons[2] = new Vertex(Interpolate(maiVerecies[2], maiVerecies[3]),1, isoValue);
+        verticesInresectons[3] = new Vertex(Interpolate(maiVerecies[3], maiVerecies[0]),1, isoValue);
         //top sqer
-        verticesInresectons[4] = new Vertex(Interpolate(maiVerecies[4], maiVerecies[5]), isoValue);
-        verticesInresectons[5] = new Vertex(Interpolate(maiVerecies[5], maiVerecies[6]), isoValue);
-        verticesInresectons[6] = new Vertex(Interpolate(maiVerecies[6], maiVerecies[7]), isoValue);
-        verticesInresectons[7] = new Vertex(Interpolate(maiVerecies[7], maiVerecies[4]), isoValue);
+        verticesInresectons[4] = new Vertex(Interpolate(maiVerecies[4], maiVerecies[5]),1, isoValue);
+        verticesInresectons[5] = new Vertex(Interpolate(maiVerecies[5], maiVerecies[6]),1, isoValue);
+        verticesInresectons[6] = new Vertex(Interpolate(maiVerecies[6], maiVerecies[7]),1, isoValue);
+        verticesInresectons[7] = new Vertex(Interpolate(maiVerecies[7], maiVerecies[4]),1, isoValue);
         //side edge
-        verticesInresectons[8] = new Vertex(Interpolate(maiVerecies[0], maiVerecies[4]), isoValue);
-        verticesInresectons[9] = new Vertex(Interpolate(maiVerecies[1], maiVerecies[5]), isoValue);
-        verticesInresectons[10] = new Vertex(Interpolate(maiVerecies[2], maiVerecies[6]), isoValue);
-        verticesInresectons[11] = new Vertex(Interpolate(maiVerecies[3], maiVerecies[7]), isoValue);
+        verticesInresectons[8] = new Vertex(Interpolate(maiVerecies[0], maiVerecies[4]),1, isoValue);
+        verticesInresectons[9] = new Vertex(Interpolate(maiVerecies[1], maiVerecies[5]), 1, isoValue);
+        verticesInresectons[10] = new Vertex(Interpolate(maiVerecies[2], maiVerecies[6]),1, isoValue);
+        verticesInresectons[11] = new Vertex(Interpolate(maiVerecies[3], maiVerecies[7]),1, isoValue);
     }
 
     public List<Vector3> GetVertxPos()
@@ -49,14 +53,14 @@ public class Cell
     {
         int temp = 0;
 
-        if (maiVerecies[0].Active) temp |= 1;
-        if (maiVerecies[1].Active) temp |= 2;
-        if (maiVerecies[2].Active) temp |= 4;
-        if (maiVerecies[3].Active) temp |= 8;
-        if (maiVerecies[4].Active) temp |= 16;
-        if (maiVerecies[5].Active) temp |= 32;
-        if (maiVerecies[6].Active) temp |= 64;
-        if (maiVerecies[7].Active) temp |= 128;
+        if (maiVerecies[0].VertexValue < isoValue) temp |= 1;
+        if (maiVerecies[1].VertexValue < isoValue) temp |= 2;
+        if (maiVerecies[2].VertexValue < isoValue) temp |= 4;
+        if (maiVerecies[3].VertexValue < isoValue) temp |= 8;
+        if (maiVerecies[4].VertexValue < isoValue) temp |= 16;
+        if (maiVerecies[5].VertexValue < isoValue) temp |= 32;
+        if (maiVerecies[6].VertexValue < isoValue) temp |= 64;
+        if (maiVerecies[7].VertexValue < isoValue) temp |= 128;
         
         return temp;
     }
@@ -116,7 +120,28 @@ public class Cell
 
     public Vector3 Interpolate(Vertex a, Vertex b)
     {
-       return (a.WordPos + b.WordPos) / 2;
+        if (TereinGenaratorMenager.UseLineralInterplation)
+        {
+
+            if (Mathf.Abs(isoValue - a.VertexValue) < 0.001f) return a.WordPos;
+            if (Mathf.Abs(isoValue - b.VertexValue) < 0.001f) return b.WordPos;
+            if (Mathf.Abs(a.VertexValue - b.VertexValue) < 0.001f) return a.WordPos;
+
+
+            float mu = (isoValue - a.VertexValue) / (b.VertexValue - a.VertexValue);
+            Vector3 p = Vector3.zero;
+
+            p.x = a.WordPos.x + mu * (b.WordPos.x - a.WordPos.x);
+            p.y = a.WordPos.y + mu * (b.WordPos.y - a.WordPos.y);
+            p.z = a.WordPos.z + mu * (b.WordPos.z - a.WordPos.z);
+
+
+            return p;
+        }
+        else
+        {
+            return ((a.WordPos + b.WordPos) / 2);
+        }
     }
 
 

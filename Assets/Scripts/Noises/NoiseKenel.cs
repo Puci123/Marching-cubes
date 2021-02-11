@@ -9,5 +9,5 @@ public abstract class NoiseKenel : ScriptableObject
     public float Zoffset = 0;
 
     //public abstract float GetPointValue(Vector3 pos,Vector3 gridSize, string seed);
-    public abstract float GetPointValue(Vector3 pos, Vector3 gridSize);
+    public abstract float GetPointValue(Vector3 pos, Vector3 gridSize,float isoValue);
 }

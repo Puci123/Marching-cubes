@@ -17,7 +17,7 @@ public class TestVertex : MonoBehaviour
 
     private void Update()
     {
-        GetComponent<MeshRenderer>().material.color = vertr.Active ? Color.green : Color.red;
+       // GetComponent<MeshRenderer>().material.color = vertr.Active ? Color.green : Color.red;
     }
 
     private void OnMouseDown()

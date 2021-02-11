@@ -31,6 +31,35 @@ public class Chunk : MonoBehaviour
 
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.V))
+            StartCoroutine(DebugVertexValues());
+        else if (Input.GetKeyDown(KeyCode.C))
+            StartCoroutine(DebugIntersectionccions());
+    }
+
+    IEnumerator DebugVertexValues()
+    {
+        foreach (Vertex vertex in grid)
+        {
+            print(vertex.VertexValue);
+            yield return null;
+        }
+    }
+
+    IEnumerator DebugIntersectionccions()
+    {
+        foreach (Cell cell in chunks)
+        {
+            foreach (Vertex vert in cell.verticesInresectons)
+            {
+                print(vert.WordPos);
+            }
+
+            yield return null;
+        }
+    }
 
     private void SetUpGrid()
     {
@@ -41,14 +70,10 @@ public class Chunk : MonoBehaviour
         grid = new Vertex[chunkTabSzie.x, chunkTabSzie.y,chunkTabSzie.z];
         chunks = new Cell[chunkTabSzie.x - 1, chunkTabSzie.y - 1, chunkTabSzie.z - 1];
 
-        print(chunkTabSzie);
-
     }
 
     private void GenerateGrid()
     {
-
-        print("Start Genertig greed");
 
         for (int z = 0; z < chunkTabSzie.z; z++)
         {
@@ -59,7 +84,7 @@ public class Chunk : MonoBehaviour
                     Vector3 temp = new Vector3(x * cellSize + transform.position.x - chunkSize.x / 2,           //x
                                                y * cellSize + transform.position.y - chunkSize.x / 2,          //y
                                                z * cellSize + transform.position.z - chunkSize.x / 2);        //z
-                    grid[x, y, z] = new Vertex(temp, GetVertexValue(temp),isoValue);
+                    grid[x, y, z] = new Vertex(temp,GetVertexValue(temp),isoValue);
                   
                 }
             }
@@ -70,7 +95,6 @@ public class Chunk : MonoBehaviour
 
     private void ConectVetecies()
     {
-        print("Start Vertex Conect");
         for (int z = 0; z < chunkTabSzie.z - 1; z++)
         {
             for (int y = 0; y < chunkTabSzie.y - 1; y++)
@@ -102,7 +126,6 @@ public class Chunk : MonoBehaviour
 
     public void MarchCube()
     {
-        print("Start Marching Cubes");
         mesh.Clear();
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 
@@ -134,7 +157,7 @@ public class Chunk : MonoBehaviour
 
     private float GetVertexValue(Vector3 vertPos)
     {
-        return noiseKenel.GetPointValue(vertPos, chunkSize);
+        return noiseKenel.GetPointValue(vertPos, chunkSize, isoValue);
     }
 
    

@@ -7,7 +7,6 @@ public class Vertex
     private Vector3 wordPos;
 
     private float vertexValue;
-    private bool active = false;
     private float isoValue;
 
     public Vertex(Vector3 _wordldPos,float _value,float _isoValue)
@@ -22,18 +21,11 @@ public class Vertex
     public Vertex(float x, float y, float z, float value, float _isoValu) : this(new Vector3(x, y, z), value, _isoValu) { }
 
 
-
-    public bool Active
-    {
-        get { return active; }
-    }
-
     public float VertexValue
     {
         get { return vertexValue; }
         set {
-                vertexValue = Mathf.Clamp(value, -1, 1);
-                active = vertexValue > 0;     
+                vertexValue = Mathf.Clamp(value, -1, 1);   
                 
             ;}
     }
