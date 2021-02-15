@@ -15,4 +15,8 @@ MonoBehaviour:
   XOffset: 0
   YOffset: 0
   Zoffset: 0
-  freqency: 1.23
+  weight: 4.01
+  freqency: 1.03
+  lacunarity: 1.53
+  octaves: 5
+  seed: 746316758

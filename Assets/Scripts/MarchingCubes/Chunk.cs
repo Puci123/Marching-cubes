@@ -74,6 +74,7 @@ public class Chunk : MonoBehaviour
 
     private void GenerateGrid()
     {
+        noiseKenel.Initalize();
 
         for (int z = 0; z < chunkTabSzie.z; z++)
         {

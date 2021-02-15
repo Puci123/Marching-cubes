@@ -10,4 +10,5 @@ public abstract class NoiseKenel : ScriptableObject
 
     //public abstract float GetPointValue(Vector3 pos,Vector3 gridSize, string seed);
     public abstract float GetPointValue(Vector3 pos, Vector3 gridSize,float isoValue);
+    public abstract void Initalize();
 }

@@ -23,4 +23,9 @@ public class PerlinNoise2D : NoiseKenel
 
 
     }
+
+    public override void Initalize()
+    {
+        
+    }
 }
