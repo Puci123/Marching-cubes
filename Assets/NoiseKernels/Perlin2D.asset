@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6247be9c318756343be1034314f63ecf, type: 3}
   m_Name: Perlin2D
   m_EditorClassIdentifier: 
-  XOffset: 0
-  YOffset: 0
-  Zoffset: 0
   amplitude: 4
-  freqency: 13.95
+  freqency: 1.8
+  seed: 0

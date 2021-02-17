@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu()]
-public class PerlinNoise3D : NoiseKenel
+public class OpenSimplexNoise3D : NoiseKenel
 {
+
     private FastNoiseLite noise = new FastNoiseLite();
     public float weight = 1f;
     public float freqency = 1f;
@@ -15,7 +16,7 @@ public class PerlinNoise3D : NoiseKenel
 
     public override void Initalize()
     {
-        noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
+        noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S);
         noise.SetFrequency(freqency);
         noise.SetFractalLacunarity(lacunarity);
         noise.SetFractalOctaves(octaves);
@@ -29,7 +30,7 @@ public class PerlinNoise3D : NoiseKenel
         float y = pos.y / gridSize.y;
         float z = pos.z / gridSize.z;
 
-        float value = Mathf.Abs(noise.GetNoise(x, y, z)) * weight;
+        float value = noise.GetNoise(x, y, z) * weight;
         return pos.y - value;
     }
 }
