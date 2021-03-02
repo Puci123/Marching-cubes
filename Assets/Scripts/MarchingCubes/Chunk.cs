@@ -7,6 +7,7 @@ public class Chunk : MonoBehaviour
     public Vector3 chunkSize;
     public float cellSize;
     public float isoValue = 0.5f;
+    public bool aplyColider = true;
     public NoiseKenel noiseKenel;
 
     [SerializeField]
@@ -15,7 +16,7 @@ public class Chunk : MonoBehaviour
     private Vector3Int chunkTabSzie;
     private Vertex[,,] grid;
     private Cell[,,] chunks;
-
+    private MeshCollider col;
     private Mesh mesh;
     private MeshFilter meshFilter;
 
@@ -23,11 +24,15 @@ public class Chunk : MonoBehaviour
     {
         mesh = new Mesh();
         meshFilter = GetComponent<MeshFilter>();
+        col = GetComponent<MeshCollider>();
 
         SetUpGrid();
         GenerateGrid();
         ConectVetecies();
         MarchCube();
+
+        if (aplyColider)
+            col.sharedMesh = mesh;
 
     }
 
