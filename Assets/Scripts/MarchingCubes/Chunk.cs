@@ -136,24 +136,37 @@ public class Chunk : MonoBehaviour
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 
         List<Vector3> vertices = new List<Vector3>();
-        List<int> triangles = new List<int>();
 
+        List<int> triangle = new List<int>();
         int i = 0;
 
         foreach (Cell cell in chunks)
         {
-        
-            cell.GetVertxPos().ForEach(n =>vertices.Add(n));
-            cell.GetVertexOrder(cell.GetCombination()).ForEach(n => triangles.Add(n + i * 12));
-            i++;
 
+            foreach (Cell.Triangl tri in cell.GetTriangle())
+            {
+                vertices.Add(tri.A);
+                vertices.Add(tri.B);
+                vertices.Add(tri.C);
+
+                triangle.Add(i);
+                triangle.Add(i + 1);
+                triangle.Add(i + 2);
+
+                i += 3;
+            }
         }
+
 
 
         mesh.name = "TereinChunk";
 
+        print(vertices.Count);
+        print(triangle.Count);
+        print(vertices.Count * 3);
+
         mesh.vertices = vertices.ToArray();
-        mesh.triangles = triangles.ToArray();
+        mesh.triangles = triangle.ToArray();
         mesh.RecalculateNormals();
         meshFilter.sharedMesh = mesh;
       
@@ -202,7 +215,7 @@ public class Chunk : MonoBehaviour
                 foreach (Cell chunk in chunks)
                 {
                     Gizmos.color = chunk.cellColor;
-                    Gizmos.DrawCube(chunk.Center(), Vector3.one * cellSize * 0.8f);
+                  //  Gizmos.DrawCube(chunk.Center(), Vector3.one * cellSize * 0.8f);
                 }
             }
 

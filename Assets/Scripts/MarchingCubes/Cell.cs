@@ -10,7 +10,7 @@ public class Cell
 
     private float isoValue;
 
-    public  Cell(Vertex[] vertices,float _isoValue)
+    public Cell(Vertex[] vertices, float _isoValue)
     {
 
         isoValue = _isoValue;
@@ -21,30 +21,16 @@ public class Cell
             maiVerecies[i] = vertices[i];
         }
 
-        //botom sqer
-        verticesInresectons[0] = new Vertex(Interpolate(maiVerecies[0], maiVerecies[1]),1, isoValue);
-        verticesInresectons[1] = new Vertex(Interpolate(maiVerecies[1], maiVerecies[2]),1, isoValue);
-        verticesInresectons[2] = new Vertex(Interpolate(maiVerecies[2], maiVerecies[3]),1, isoValue);
-        verticesInresectons[3] = new Vertex(Interpolate(maiVerecies[3], maiVerecies[0]),1, isoValue);
-        //top sqer
-        verticesInresectons[4] = new Vertex(Interpolate(maiVerecies[4], maiVerecies[5]),1, isoValue);
-        verticesInresectons[5] = new Vertex(Interpolate(maiVerecies[5], maiVerecies[6]),1, isoValue);
-        verticesInresectons[6] = new Vertex(Interpolate(maiVerecies[6], maiVerecies[7]),1, isoValue);
-        verticesInresectons[7] = new Vertex(Interpolate(maiVerecies[7], maiVerecies[4]),1, isoValue);
-        //side edge
-        verticesInresectons[8] = new Vertex(Interpolate(maiVerecies[0], maiVerecies[4]),1, isoValue);
-        verticesInresectons[9] = new Vertex(Interpolate(maiVerecies[1], maiVerecies[5]), 1, isoValue);
-        verticesInresectons[10] = new Vertex(Interpolate(maiVerecies[2], maiVerecies[6]),1, isoValue);
-        verticesInresectons[11] = new Vertex(Interpolate(maiVerecies[3], maiVerecies[7]),1, isoValue);
     }
 
     public List<Vector3> GetVertxPos()
     {
         List<Vector3> temp = new List<Vector3>();
-    
-        foreach (Vertex vert in verticesInresectons)
+
+        foreach (Vertex vert in GetVertsIntersetion(GetCombination()))
         {
-            temp.Add(vert.WordPos);
+            if(vert != null)
+                temp.Add(vert.WordPos);
         }
         return temp;
     }
@@ -65,39 +51,68 @@ public class Cell
         return temp;
     }
 
-    public List<Vertex> GetVertsIntersetion(int Combination)
+    public Vertex PointOnEdge(Vertex a, Vertex b)
+    {
+        Vertex vert = new Vertex(Interpolate(a,b),1,isoValue);
+        return vert;
+    }
+
+    public Vertex[] GetVertsIntersetion(int Combination)
     {
  
-        List<Vertex> temp = new List<Vertex>();
+        Vertex[] temp = new Vertex[12];
 
-
+        //Bot sqer
         if ((TriangulationTable.edgeTable[Combination] & 1) != 0)
-            temp.Add(verticesInresectons[0]);
+            temp[0] = (PointOnEdge(maiVerecies[0], maiVerecies[1]));
         if ((TriangulationTable.edgeTable[Combination] & 2) != 0)
-            temp.Add(verticesInresectons[1]);
+            temp[1] = (PointOnEdge(maiVerecies[1], maiVerecies[2]));
         if ((TriangulationTable.edgeTable[Combination] & 4) != 0)
-            temp.Add(verticesInresectons[2]);
+            temp[2] = (PointOnEdge(maiVerecies[2], maiVerecies[3]));
         if ((TriangulationTable.edgeTable[Combination] & 8) != 0)
-            temp.Add(verticesInresectons[3]);
+            temp[3] = (PointOnEdge(maiVerecies[3], maiVerecies[0]));
+
+        //Top sqer
         if ((TriangulationTable.edgeTable[Combination] & 16) != 0)
-            temp.Add(verticesInresectons[4]);
+            temp[4] = (PointOnEdge(maiVerecies[4], maiVerecies[5]));
         if ((TriangulationTable.edgeTable[Combination] & 32) != 0)
-            temp.Add(verticesInresectons[5]);
+            temp[5] = (PointOnEdge(maiVerecies[5], maiVerecies[6]));
         if ((TriangulationTable.edgeTable[Combination] & 64) != 0)
-            temp.Add(verticesInresectons[6]);
+            temp[6] = (PointOnEdge(maiVerecies[6], maiVerecies[7]));
         if ((TriangulationTable.edgeTable[Combination] & 128) != 0)
-            temp.Add(verticesInresectons[7]);
+            temp[7] = (PointOnEdge(maiVerecies[7], maiVerecies[4]));
+
+        //sides
         if ((TriangulationTable.edgeTable[Combination] & 256) != 0)
-            temp.Add(verticesInresectons[8]);
+            temp[8] = (PointOnEdge(maiVerecies[0], maiVerecies[4]));
         if ((TriangulationTable.edgeTable[Combination] & 512) != 0)
-            temp.Add(verticesInresectons[9]);
+            temp[9] = (PointOnEdge(maiVerecies[1], maiVerecies[5]));
         if ((TriangulationTable.edgeTable[Combination] & 1024) != 0)
-            temp.Add(verticesInresectons[10]);
+            temp[10] = (PointOnEdge(maiVerecies[2], maiVerecies[6]));
         if ((TriangulationTable.edgeTable[Combination] & 2048) != 0)
-            temp.Add(verticesInresectons[11]);
+            temp[11] = (PointOnEdge(maiVerecies[3], maiVerecies[7]));
+
 
 
         return temp;
+    }
+
+    public List<Triangl> GetTriangle()
+    {
+        List<Triangl> triangles = new List<Triangl>();
+        int combination = GetCombination();
+        Vertex[] intersection = GetVertsIntersetion(combination);
+
+        for (int i = 0; TriangulationTable.triTable[combination, i] != -1; i += 3)
+        {
+            Vertex a = intersection[(TriangulationTable.triTable[combination, i])];
+            Vertex b = intersection[(TriangulationTable.triTable[combination, i + 1])];
+            Vertex c = intersection[(TriangulationTable.triTable[combination, i + 2])];
+
+            triangles.Add(new Triangl(a.WordPos, b.WordPos, c.WordPos));
+        }
+
+        return triangles;
     }
     
     public List<int> GetVertexOrder(int combination)
@@ -109,12 +124,9 @@ public class Cell
             temp.Add(TriangulationTable.triTable[combination, i]);
             temp.Add(TriangulationTable.triTable[combination, i + 1]);
             temp.Add(TriangulationTable.triTable[combination, i + 2]);
-
-
         }
 
         return temp;
-
     }
  
 
@@ -144,18 +156,21 @@ public class Cell
         }
     }
 
-
-
-    public Vector3 Center()
+    public struct Triangl
     {
-        Vector3 temp = Vector3.zero;
-       
+        private Vector3 a,b,c;
 
-        foreach (Vertex pos in new List<Vertex>(maiVerecies))
+        public Vector3 A {get  { return a; }}
+        public Vector3 B { get { return b; } }
+        public Vector3 C { get { return c; } }
+
+
+        public Triangl(Vector3 _a, Vector3 _b,Vector3 _c)
         {
-            temp += pos.WordPos;
+            a = _a;
+            b = _b;
+            c = _c;
         }
-
-        return temp / 8;
     }
+
 }
