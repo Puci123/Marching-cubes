@@ -406,7 +406,6 @@ MonoBehaviour:
   isoValue: 0.1
   aplyColider: 1
   noiseKenel: {fileID: 11400000, guid: 7d4e0797286146b4f87bbb2bed96a301, type: 2}
-  showGizmos: 0
 --- !u!23 &1795139250
 MeshRenderer:
   m_ObjectHideFlags: 0

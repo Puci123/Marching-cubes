@@ -10,12 +10,10 @@ public class Chunk : MonoBehaviour
     public bool aplyColider = true;
     public NoiseKenel noiseKenel;
 
-    [SerializeField]
-    private bool showGizmos;
-
     private Vector3Int chunkTabSzie;
-    private Vertex[,,] grid;
-    private Cell[,,] chunks;
+    private Vertex[,,] vertGrid;
+    private Cell[,,] cellGrid;
+
     private MeshCollider col;
     private Mesh mesh;
     private MeshFilter meshFilter;
@@ -36,44 +34,14 @@ public class Chunk : MonoBehaviour
 
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.V))
-            StartCoroutine(DebugVertexValues());
-        else if (Input.GetKeyDown(KeyCode.C))
-            StartCoroutine(DebugIntersectionccions());
-    }
-
-    IEnumerator DebugVertexValues()
-    {
-        foreach (Vertex vertex in grid)
-        {
-            print(vertex.VertexValue);
-            yield return null;
-        }
-    }
-
-    IEnumerator DebugIntersectionccions()
-    {
-        foreach (Cell cell in chunks)
-        {
-            foreach (Vertex vert in cell.verticesInresectons)
-            {
-                print(vert.WordPos);
-            }
-
-            yield return null;
-        }
-    }
-
     private void SetUpGrid()
     {
         chunkTabSzie.x = Mathf.RoundToInt(chunkSize.x / cellSize) + 1;
         chunkTabSzie.y = Mathf.RoundToInt(chunkSize.y / cellSize) + 1;
         chunkTabSzie.z = Mathf.RoundToInt(chunkSize.z / cellSize) + 1;
 
-        grid = new Vertex[chunkTabSzie.x, chunkTabSzie.y,chunkTabSzie.z];
-        chunks = new Cell[chunkTabSzie.x - 1, chunkTabSzie.y - 1, chunkTabSzie.z - 1];
+        vertGrid = new Vertex[chunkTabSzie.x, chunkTabSzie.y,chunkTabSzie.z];
+        cellGrid = new Cell[chunkTabSzie.x - 1, chunkTabSzie.y - 1, chunkTabSzie.z - 1];
 
     }
 
@@ -90,7 +58,7 @@ public class Chunk : MonoBehaviour
                     Vector3 temp = new Vector3(x * cellSize + transform.position.x - chunkSize.x / 2,           //x
                                                y * cellSize + transform.position.y - chunkSize.x / 2,          //y
                                                z * cellSize + transform.position.z - chunkSize.x / 2);        //z
-                    grid[x, y, z] = new Vertex(temp,GetVertexValue(temp),isoValue);
+                    vertGrid[x, y, z] = new Vertex(temp,GetVertexValue(temp),isoValue);
                   
                 }
             }
@@ -111,17 +79,17 @@ public class Chunk : MonoBehaviour
                     Vertex[] vertcies = new Vertex[8];
 
                     //DownSqer
-                    vertcies[0] = grid[x, y, z];
-                    vertcies[1] = grid[x + 1, y, z];
-                    vertcies[2] = grid[x +1, y, z + 1];
-                    vertcies[3] = grid[x, y, z + 1];
+                    vertcies[0] = vertGrid[x, y, z];
+                    vertcies[1] = vertGrid[x + 1, y, z];
+                    vertcies[2] = vertGrid[x +1, y, z + 1];
+                    vertcies[3] = vertGrid[x, y, z + 1];
                     //UpSqer
-                    vertcies[4] = grid[x, y + 1, z];
-                    vertcies[5] = grid[x + 1, y + 1, z];
-                    vertcies[6] = grid[x + 1, y + 1, z + 1];
-                    vertcies[7] = grid[x, y + 1, z + 1];
+                    vertcies[4] = vertGrid[x, y + 1, z];
+                    vertcies[5] = vertGrid[x + 1, y + 1, z];
+                    vertcies[6] = vertGrid[x + 1, y + 1, z + 1];
+                    vertcies[7] = vertGrid[x, y + 1, z + 1];
 
-                    chunks[x, y, z] = new Cell(vertcies,isoValue);
+                    cellGrid[x, y, z] = new Cell(vertcies,isoValue);
                 }
             }
         }
@@ -140,7 +108,7 @@ public class Chunk : MonoBehaviour
         List<int> triangle = new List<int>();
         int i = 0;
 
-        foreach (Cell cell in chunks)
+        foreach (Cell cell in cellGrid)
         {
 
             foreach (Cell.Triangl tri in cell.GetTriangle())
@@ -178,20 +146,6 @@ public class Chunk : MonoBehaviour
     {
         return noiseKenel.GetPointValue(vertPos, chunkSize, isoValue);
     }
-
-   
-    private void OnValidate()
-    {
-        if(chunkSize == Vector3.zero)
-        {
-            Debug.LogError("Chunk szie cnat be 0");
-        }
-        if(cellSize <= 0)
-        {
-            Debug.LogError("Cell size must be greater tan 0");
-        }
-    }
-        
     public Vertex GetVertexFromWorldPoint(Vector3 position)
     {
         float PercentX = Mathf.Clamp01(position.x / chunkSize.x);
@@ -202,25 +156,9 @@ public class Chunk : MonoBehaviour
         int y = Mathf.RoundToInt((chunkTabSzie.y - 1) * PercentY);
         int z = Mathf.RoundToInt((chunkTabSzie.z - 1) * PercentZ);
 
-        return grid[x, y, z];
+        return vertGrid[x, y, z];
 
     }
 
-    private void OnDrawGizmos()
-    {
-        if (showGizmos)
-        {
-            if (grid != null && grid.Length > 0)
-            {
-                foreach (Cell chunk in chunks)
-                {
-                    Gizmos.color = chunk.cellColor;
-                  //  Gizmos.DrawCube(chunk.Center(), Vector3.one * cellSize * 0.8f);
-                }
-            }
 
-            Gizmos.color = Color.white;
-            Gizmos.DrawWireCube(transform.position,new Vector3(chunkSize.x, chunkSize.y, chunkSize.z));
-        }
-    }
 }

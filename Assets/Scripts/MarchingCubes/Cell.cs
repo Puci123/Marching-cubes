@@ -27,10 +27,12 @@ public class Cell
     {
         List<Vector3> temp = new List<Vector3>();
 
-        foreach (Vertex vert in GetVertsIntersetion(GetCombination()))
+        foreach (Vertex vert in GetVertsIntersetion())
         {
-            if(vert != null)
+            if (vert != null)
                 temp.Add(vert.WordPos);
+            else
+                Debug.LogError("Mising vertcies");
         }
         return temp;
     }
@@ -57,10 +59,11 @@ public class Cell
         return vert;
     }
 
-    public Vertex[] GetVertsIntersetion(int Combination)
+    public Vertex[] GetVertsIntersetion()
     {
  
         Vertex[] temp = new Vertex[12];
+        int Combination = GetCombination();
 
         //Bot sqer
         if ((TriangulationTable.edgeTable[Combination] & 1) != 0)
@@ -101,7 +104,7 @@ public class Cell
     {
         List<Triangl> triangles = new List<Triangl>();
         int combination = GetCombination();
-        Vertex[] intersection = GetVertsIntersetion(combination);
+        Vertex[] intersection = GetVertsIntersetion();
 
         for (int i = 0; TriangulationTable.triTable[combination, i] != -1; i += 3)
         {
@@ -115,28 +118,13 @@ public class Cell
         return triangles;
     }
     
-    public List<int> GetVertexOrder(int combination)
-    {
-        List<int> temp = new List<int>();
-
-        for (int i = 0; TriangulationTable.triTable[combination,i] != -1; i += 3)
-        {
-            temp.Add(TriangulationTable.triTable[combination, i]);
-            temp.Add(TriangulationTable.triTable[combination, i + 1]);
-            temp.Add(TriangulationTable.triTable[combination, i + 2]);
-        }
-
-        return temp;
-    }
- 
-
     public Vector3 Interpolate(Vertex a, Vertex b)
     {
         if (TereinGenaratorMenager.UseLineralInterplation)
         {
 
-            if (Mathf.Abs(isoValue - a.VertexValue) < 0.001f) return a.WordPos;
-            if (Mathf.Abs(isoValue - b.VertexValue) < 0.001f) return b.WordPos;
+            if (Mathf.Abs(isoValue - a.VertexValue)      < 0.001f) return a.WordPos;
+            if (Mathf.Abs(isoValue - b.VertexValue)      < 0.001f) return b.WordPos;
             if (Mathf.Abs(a.VertexValue - b.VertexValue) < 0.001f) return a.WordPos;
 
 
