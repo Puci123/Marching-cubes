@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Chunk : MonoBehaviour
 {
-    public Vector3 chunkSize;
-    public float cellSize;
-    public float isoValue = 0.5f;
-    public bool aplyColider = true;
-    public NoiseKenel noiseKenel;
+    private Vector3 chunkSize;
+    private float cellSize;
+    private float isoValue = 0.5f;
+    private bool aplyColider = true;
+    private NoiseKenel noiseKenel;
 
     private Vector3Int chunkTabSzie;
     private Vertex[,,] vertGrid;
@@ -18,8 +18,14 @@ public class Chunk : MonoBehaviour
     private Mesh mesh;
     private MeshFilter meshFilter;
 
-    private void Start()
+    public void SetUpChunk(Vector3 _chunkSize,float _cellSize,float _isoValue,bool _applayColider, NoiseKenel _noiseKenel)
     {
+        chunkSize = _chunkSize;
+        cellSize = _cellSize;
+        isoValue = _isoValue;
+        aplyColider = _applayColider;
+        noiseKenel = _noiseKenel;
+
         mesh = new Mesh();
         meshFilter = GetComponent<MeshFilter>();
         col = GetComponent<MeshCollider>();
@@ -31,7 +37,6 @@ public class Chunk : MonoBehaviour
 
         if (aplyColider)
             col.sharedMesh = mesh;
-
     }
 
     private void SetUpGrid()
@@ -55,10 +60,11 @@ public class Chunk : MonoBehaviour
             {
                 for (int x = 0; x < chunkTabSzie.x; x++)
                 {
-                    Vector3 temp = new Vector3(x * cellSize + transform.position.x - chunkSize.x / 2,           //x
-                                               y * cellSize + transform.position.y - chunkSize.x / 2,          //y
-                                               z * cellSize + transform.position.z - chunkSize.x / 2);        //z
-                    vertGrid[x, y, z] = new Vertex(temp,GetVertexValue(temp),isoValue);
+                    Vector3 temp = new Vector3(x * cellSize   - chunkSize.x / 2,           //x
+                                               y * cellSize   - chunkSize.y / 2,          //y
+                                               z * cellSize   - chunkSize.z / 2);        //z
+                    Vector3 offset = new Vector3(transform.position.x / transform.localScale.x, transform.position.y / transform.localScale.y, transform.position.z / transform.localScale.z);
+                    vertGrid[x, y, z] = new Vertex(temp,GetVertexValue(temp + offset),isoValue);
                   
                 }
             }
@@ -146,19 +152,13 @@ public class Chunk : MonoBehaviour
     {
         return noiseKenel.GetPointValue(vertPos, chunkSize, isoValue);
     }
-    public Vertex GetVertexFromWorldPoint(Vector3 position)
+
+    private void OnDrawGizmos()
     {
-        float PercentX = Mathf.Clamp01(position.x / chunkSize.x);
-        float PercentY = Mathf.Clamp01(position.y / chunkSize.y);
-        float PercentZ = Mathf.Clamp01(position.z / chunkSize.z);
-
-        int x = Mathf.RoundToInt((chunkTabSzie.x - 1) * PercentX);
-        int y = Mathf.RoundToInt((chunkTabSzie.y - 1) * PercentY);
-        int z = Mathf.RoundToInt((chunkTabSzie.z - 1) * PercentZ);
-
-        return vertGrid[x, y, z];
-
+        Gizmos.color = Color.red;
+        Vector3 center = transform.position;
+        Vector3 size = new Vector3(transform.localScale.x * chunkSize.x,transform.localScale.y * chunkSize.y,transform.localScale.z * chunkSize.z);
+        Gizmos.DrawWireCube(center,size);
     }
-
 
 }
