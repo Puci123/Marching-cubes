@@ -120,7 +120,7 @@ public class Cell
     
     public Vector3 Interpolate(Vertex a, Vertex b)
     {
-        if (TereinGenaratorMenager.UseLineralInterplation)
+        if (ChunkMenger.interpolateVertecies)
         {
 
             if (Mathf.Abs(isoValue - a.VertexValue)      < 0.001f) return a.WordPos;

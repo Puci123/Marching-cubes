@@ -69,8 +69,6 @@ public class Chunk : MonoBehaviour
                 }
             }
         }
-
-        print("Gred genreted");
     }
 
     private void ConectVetecies()
@@ -99,9 +97,6 @@ public class Chunk : MonoBehaviour
                 }
             }
         }
-
-        print("Vertecies Conected");
-
     }
 
     public void MarchCube()
@@ -135,30 +130,15 @@ public class Chunk : MonoBehaviour
 
         mesh.name = "TereinChunk";
 
-        print(vertices.Count);
-        print(triangle.Count);
-        print(vertices.Count * 3);
-
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangle.ToArray();
         mesh.RecalculateNormals();
         meshFilter.sharedMesh = mesh;
-      
-
-        print("Cubes Marched");
     }
 
     private float GetVertexValue(Vector3 vertPos)
     {
         return noiseKenel.GetPointValue(vertPos, chunkSize, isoValue);
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Vector3 center = transform.position;
-        Vector3 size = new Vector3(transform.localScale.x * chunkSize.x,transform.localScale.y * chunkSize.y,transform.localScale.z * chunkSize.z);
-        Gizmos.DrawWireCube(center,size);
     }
 
 }

@@ -32,4 +32,9 @@ public class PerlinNoise3D : NoiseKenel
         float value = Mathf.Abs(noise.GetNoise(x, y, z)) * weight;
         return pos.y - value;
     }
+
+    public override void RandomSeed()
+    {
+        seed = Random.Range(int.MinValue, int.MaxValue);
+    }
 }
